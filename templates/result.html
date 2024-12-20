@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Secret Santa Match</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: url("{{ url_for('static', filename='image/christmas-bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-top: 30px;
+            font-size: 2rem;
+            color: #e63946;
+            text-shadow: 0 0 10px #e63946, 0 0 20px #ff4d6d;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            color: #fff;
+        }
+
+        #final-name {
+            font-size: 2rem;
+            color: #ff0000;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .rolling {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6347;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 25px;
+            margin-top: 30px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #388e3c;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Snow Animation */
+        .snow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: white;
+            font-size: 1.2em;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* Hanging Socks */
+        .socks {
+            position: relative;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .sock {
+            width: 50px;
+        }
+
+        /* Christmas Tree Image */
+        .tree {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1rem;
+            }
+
+            #final-name {
+                font-size: 1.5rem;
+            }
+
+            .rolling {
+                font-size: 1.2rem;
+            }
+
+            .sock {
+                width: 30px;
+            }
+
+            .tree {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="snow">
+        <!-- Generate snowflakes -->
+        <div class="snowflake" style="left: 10%; animation-duration: 10s;">❄</div>
+        <div class="snowflake" style="left: 20%; animation-duration: 15s;">❄</div>
+        <div class="snowflake" style="left: 30%; animation-duration: 12s;">❄</div>
+        <div class="snowflake" style="left: 40%; animation-duration: 14s;">❄</div>
+        <div class="snowflake" style="left: 50%; animation-duration: 16s;">❄</div>
+        <div class="snowflake" style="left: 60%; animation-duration: 18s;">❄</div>
+        <div class="snowflake" style="left: 70%; animation-duration: 11s;">❄</div>
+        <div class="snowflake" style="left: 80%; animation-duration: 17s;">❄</div>
+        <div class="snowflake" style="left: 90%; animation-duration: 13s;">❄</div>
+    </div>
+
+    <h1>🎉 Secret Santa Match 🎉</h1>
+
+    <!-- Hanging Socks -->
+    <div class="socks">
+        <img src="{{ url_for('static', filename='image/sock1.png') }}" alt="Sock" class="sock">
+        <img src="{{ url_for('static', filename='image/sock2.png') }}" alt="Sock" class="sock">
+        <img src="{{ url_for('static', filename='image/sock3.png') }}" alt="Sock" class="sock">
+    </div>
+
+    <h2>{{ name }}, you are Secret Santa for:</h2>
+    <div class="rolling" id="rolling-text">🎁 Rolling...</div>
+    <h2 id="final-name">{{ recipient }}</h2>
+
+    <br>
+    <a href="/"><button>Go Back</button></a>
+
+    <!-- Christmas Tree Image -->
+    <img src="{{ url_for('static', filename='image/tree.png') }}" 
+         alt="Christmas Tree" 
+         class="tree">
+
+    <script>
+        const recipient = "{{ recipient }}"; // The final name to reveal
+        const rollingText = document.getElementById("rolling-text");
+        const finalName = document.getElementById("final-name");
+
+        const randomNames = [
+            "FARZEEN", "ANAND", "RAMEEZ", "HAMDAN", "AARTI",
+            "VISHNU", "FOUAD", "SREERAG", "THANHEEM", "SAFA",
+            "OMAR", "HISHAM", "SAKINA", "MOAZ", "RITIKA", "HIROSH", "SHAH", "Vyshnav"
+        ];
+
+        let rollingInterval;
+
+        function startRolling() {
+            let index = 0;
+
+            // Cycle through random names
+            rollingInterval = setInterval(() => {
+                rollingText.textContent = randomNames[index] + " 🎁";
+                index = (index + 1) % randomNames.length;
+            }, 100);
+        }
+
+        function revealName() {
+            clearInterval(rollingInterval); // Stop the rolling effect
+            rollingText.style.display = "none"; // Hide rolling text
+            finalName.style.display = "block"; // Show the recipient's name
+        }
+
+        // Start rolling effect
+        startRolling();
+
+        // Reveal the recipient name after 3 seconds
+        setTimeout(revealName, 3000);
+    </script>
+</body>
+</html>
